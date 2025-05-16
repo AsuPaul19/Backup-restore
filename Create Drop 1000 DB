@@ -1,0 +1,46 @@
+DECLARE @dbPrefix SYSNAME = 'TestDB'  -- Prefix for the database name
+DECLARE @total INT = 1000              -- Total number of databases to create (adjustable)
+DECLARE @i INT = 1
+DECLARE @dbName SYSNAME
+DECLARE @sql NVARCHAR(MAX)
+
+WHILE @i <= @total
+BEGIN
+    BEGIN TRY
+        SET @dbName = CONCAT(@dbPrefix, @i)
+
+        -- Only create if the database doesn't exist
+        IF DB_ID(@dbName) IS NULL
+        BEGIN
+            SET @sql = 'CREATE DATABASE ' + QUOTENAME(@dbName)
+            EXEC (@sql)
+            PRINT 'Created database: ' + @dbName
+        END
+        ELSE
+        BEGIN
+            PRINT 'Database already exists: ' + @dbName
+        END
+    END TRY
+    BEGIN CATCH
+        PRINT 'Error creating database: ' + ERROR_MESSAGE()
+    END CATCH
+
+    SET @i += 1
+END
+
+
+
+
+/*
+DECLARE @dbName SYSNAME
+DECLARE @sql NVARCHAR(MAX)
+
+DECLARE @i INT = 1
+WHILE @i <= 1000
+BEGIN
+    SET @dbName = CONCAT('database', @i)
+    SET @sql = 'CREATE DATABASE ' + QUOTENAME(@dbName)
+    EXEC (@sql)
+    SET @i += 1
+END
+*/
